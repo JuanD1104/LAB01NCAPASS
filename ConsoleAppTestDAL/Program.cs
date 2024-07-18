@@ -8,8 +8,8 @@ using System.Linq.Expressions;
 //CreateAsync().GetAwaiter().GetResult();
 //RetreiveAsync().GetAwaiter().GetResult();
 //UpdateAsync().GetAwaiter().GetResult();
-FilterAsync().GetAwaiter().GetResult();
-
+//FilterAsync().GetAwaiter().GetResult();
+DeleteAsync().GetAwaiter().GetResult();
 Console.ReadKey();
 
 //Method to Create Data Customer
@@ -82,7 +82,7 @@ static async Task UpdateAsync()
             customerToUpdate.FirstName = "Liu";
             customerToUpdate.LastName = "Wong";
             customerToUpdate.City = "Toronto";
-            customerToUpdate.Country = "Canadá";
+            customerToUpdate.Country = "Canada";
             customerToUpdate.Phone = "+14337-1233-3435";
 
 
@@ -123,6 +123,23 @@ static async Task FilterAsync()
         foreach (var customer in customers)
         {
             Console.WriteLine($"(Customer:  { customer.FirstName}\t            {customer.LastName}\t from {customer.City}");
+        }
+    }
+}
+
+//Method to Delete Data
+
+static async Task DeleteAsync() 
+{
+    using (var repository = RepositoryFactory.CreateRepository()) 
+    {
+        Expression<Func<Customer, bool>> criteria = customer => customer.Id == 93;
+        var customerToDelete = await repository.RetreiveAsync(criteria);
+
+        if (customerToDelete != null)
+        {
+            bool deleted = await repository.DeleteAsync(customerToDelete);
+            Console.WriteLine(deleted ? "Customer Has Deleted" : "Error, Customer Not Deleted");
         }
     }
 }
