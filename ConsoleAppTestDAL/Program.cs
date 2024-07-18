@@ -5,8 +5,9 @@ using DAL;
 using DAL.Models;
 using System.Linq.Expressions;
 
-CreateAsync().GetAwaiter().GetResult();
-RetreiveAsync().GetAwaiter().GetResult();
+//CreateAsync().GetAwaiter().GetResult();
+//RetreiveAsync().GetAwaiter().GetResult();
+UpdateAsync().GetAwaiter().GetResult();
 static async Task CreateAsync()
 { 
     //Add Customer
@@ -34,7 +35,7 @@ static async Task CreateAsync()
     
     }
 }
-
+//Retreive Data Customer
 static async Task RetreiveAsync()
 {
     using (var repository = RepositoryFactory.CreateRepository())
@@ -61,3 +62,46 @@ static async Task RetreiveAsync()
 
     }
 }
+
+
+static async Task UpdateAsync()
+{
+    //Supuesto: Existe el objeto a modificar
+
+    using (var repository = RepositoryFactory.CreateRepository()) 
+    {
+        var customerToUpdate = await repository.RetreiveAsync<Customer>(c => c.Id == 78);
+
+        if (customerToUpdate != null) 
+        {
+            customerToUpdate.FirstName = "Liu";
+            customerToUpdate.LastName = "Wong";
+            customerToUpdate.City = "Toronto";
+            customerToUpdate.Country = "Canadá";
+            customerToUpdate.Phone = "+14337-1233-3435";
+
+
+        }
+
+        try
+        {
+            bool update = await repository.UpdateAsync(customerToUpdate);
+            if (update) 
+            {
+                Console.WriteLine("Customer Upddate Successfully");
+            }
+            else 
+            {
+                Console.WriteLine("Customer Update Failed");
+            }
+        }
+        catch (Exception ex)
+        {
+
+            Console.WriteLine($"Error: {ex.Message}");
+        }
+    }
+
+
+}
+
