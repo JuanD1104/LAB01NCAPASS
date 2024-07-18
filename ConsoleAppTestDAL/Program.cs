@@ -7,7 +7,12 @@ using System.Linq.Expressions;
 
 //CreateAsync().GetAwaiter().GetResult();
 //RetreiveAsync().GetAwaiter().GetResult();
-UpdateAsync().GetAwaiter().GetResult();
+//UpdateAsync().GetAwaiter().GetResult();
+FilterAsync().GetAwaiter().GetResult();
+
+Console.ReadKey();
+
+//Method to Create Data Customer
 static async Task CreateAsync()
 { 
     //Add Customer
@@ -35,7 +40,7 @@ static async Task CreateAsync()
     
     }
 }
-//Retreive Data Customer
+//Method to Retreive Data Customer
 static async Task RetreiveAsync()
 {
     using (var repository = RepositoryFactory.CreateRepository())
@@ -63,7 +68,7 @@ static async Task RetreiveAsync()
     }
 }
 
-
+//Method to Update Data Customer
 static async Task UpdateAsync()
 {
     //Supuesto: Existe el objeto a modificar
@@ -105,3 +110,19 @@ static async Task UpdateAsync()
 
 }
 
+//Method to Filter Data
+
+static async Task FilterAsync()
+{
+    using (var repository = RepositoryFactory.CreateRepository()) 
+    {
+        Expression<Func<Customer, bool>> criteria = c => c.Country == "USA";
+
+        var customers = await repository.FilterAsync(criteria);
+
+        foreach (var customer in customers)
+        {
+            Console.WriteLine($"(Customer:  { customer.FirstName}\t            {customer.LastName}\t from {customer.City}");
+        }
+    }
+}
