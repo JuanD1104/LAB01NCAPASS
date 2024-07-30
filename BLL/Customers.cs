@@ -1,7 +1,6 @@
 ﻿using DAL;
 using DAL.Models;
 using System.Linq.Expressions;
-using DAL;
 
 namespace BLL
 {
