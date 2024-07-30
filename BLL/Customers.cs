@@ -11,89 +11,105 @@ namespace BLL
             Customer customerResult = null;
             using (var repository = RepositoryFactory.CreateRepository())
             {
-                //Buscar si el nombre del cliente existe
-                Customers customerSearch = await repository.RetreiveAsync<Customers>(c => c.FirstName == customer.FirstName);
-                if (customerSearch != null)
+                // Buscar si el nombre de cliente existe
+                Customer customerSearch = await repository.RetrieveAsync<Customer>(c => c.FirstName == customer.FirstName);
+                if (customerSearch == null)
                 {
-                    //No existre, podemos Crearlo
+                    // No existe, podemos crearlo
                     customerResult = await repository.CreateAsync(customer);
                 }
-                else 
+                else
                 {
+                    // Podríamos aqui lanzar una exepciòn
+                    // para notificar que el cliente ya existe.
+                    // Podriamos incluso crear una capa de Excepciones
+                    // personalizadas y consumirla desde otras  
+                    // capas.
                     CustomerExceptions.ThrowCustomerAlreadyExistsException(customerSearch.FirstName, customerSearch.LastName);
                 }
-            }
-            return customerResult;
 
+            }
+            return customerResult!;
         }
 
-        public async Task<List<Customer>> RetrieveByIDAsync(int id) 
+        public async Task<Customer> RetrieveByIDAsync(int id)
         {
             Customer result = null;
 
             using (var repository = RepositoryFactory.CreateRepository())
             {
-                Customer customer = await repository.RetreiveAsync<Customer>(c => c.Id == id);
+                Customer customer = await repository.RetrieveAsync<Customer>(c => c.Id == id);
 
-                //Checkc if cuustomer was found
-                if (customer == null) 
+                // Check if customer was found
+                if (customer == null)
                 {
-                    CustomerExceptions.ThrowInvalidCustomerDataException();
+                    // Throw a CustomerNotFoundException (assuming you have this class)
+                    CustomerExceptions.ThrowInvalidCustomerIdException(id);
                 }
-                return customer;
+
+                return customer!;
             }
         }
 
-        public async Task<List<Customer>> RetrieveAllAsync() 
+        public async Task<bool> UpdateAsync(Customer customer)
         {
-            List<Customer> Result = null;
-
-            using (var r = RepositoryFactory.CreateRepository()) 
-            {
-                Expression<Func<Customer, bool>> allCustomersCriteria = X => true;
-                Result = await r.FilterAsync<Customer>(allCustomersCriteria);
-            }
-            return Result;
-        }
-
-        public async Task<bool> UpdateAsync(Customer customer) 
-        {
-
             bool Result = false;
-            using (var repository = RepositoryFactory.CreateRepository()) 
+            using (var repository = RepositoryFactory.CreateRepository())
             {
-                Customer customerSearch = await RepositoryFactory.RetrieveAsync<Customer>(c => c.FirstName == customer.FirstName && c.Id != customer.Id);
-                if (customerSearch == null) 
+                // Validar que el nombre del cliente no exista
+                Customer customerSearch = await repository.RetrieveAsync<Customer>(
+                    c => c.FirstName == customer.FirstName && c.Id != customer.Id);
+
+                if (customerSearch == null)
                 {
-                    //No existe
+                    // No existe
                     Result = await repository.UpdateAsync(customer);
                 }
                 else
                 {
-                    CustomerExceptions.ThrowCustomerAlreadyExistsException(customerSearch.FirstName, customerSearch.LastName);
+                    // Podemos implementar alguna lógica para
+                    // indicar que no se pudo modificar
+                    CustomerExceptions.ThrowCustomerAlreadyExistsException(
+                        customerSearch.FirstName, customerSearch.LastName);
                 }
             }
             return Result;
-               
         }
 
-        public async Task<bool> DeleteAsync(int id) 
+        public async Task<bool> DeleteAsync(int id)
         {
             bool Result = false;
-            //buscar un cliente para ver si tinene Orders (orden de compra)
+            // Buscar un cliente para ver si tiene Orders (Ordenes de Compra)
             var customer = await RetrieveByIDAsync(id);
-            if (customer == null)
+            if (customer != null)
             {
+                // Eliminar el cliente
                 using (var repository = RepositoryFactory.CreateRepository())
                 {
                     Result = await repository.DeleteAsync(customer);
                 }
             }
-            else 
+            else
             {
-                CustomerExceptions.ThrowInvalidCustomerIdException(customer);
+                // Podemos implementar alguna lógica
+                // para indicar que el producto no existe
+                CustomerExceptions.ThrowInvalidCustomerIdException(id);
             }
             return Result;
         }
+
+        public async Task<List<Customer>> RetrieveAllAsync()
+        {
+            List<Customer> Result = null;
+
+            using (var r = RepositoryFactory.CreateRepository())
+            {
+                // Define el criterio de filtro para obtener todos los clientes.
+                Expression<Func<Customer, bool>> allCustomersCriteria = x => true;
+                Result = await r.FilterAsync<Customer>(allCustomersCriteria);
+            }
+            return Result;
+        }
+
     }
 }

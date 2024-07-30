@@ -5,10 +5,10 @@ using DAL;
 using DAL.Models;
 using System.Linq.Expressions;
 
-//CreateAsync().GetAwaiter().GetResult();
-//RetreiveAsync().GetAwaiter().GetResult();
-//UpdateAsync().GetAwaiter().GetResult();
-//FilterAsync().GetAwaiter().GetResult();
+CreateAsync().GetAwaiter().GetResult();
+RetrieveAsync().GetAwaiter().GetResult();
+UpdateAsync().GetAwaiter().GetResult();
+FilterAsync().GetAwaiter().GetResult();
 DeleteAsync().GetAwaiter().GetResult();
 Console.ReadKey();
 
@@ -41,17 +41,17 @@ static async Task CreateAsync()
     }
 }
 //Method to Retreive Data Customer
-static async Task RetreiveAsync()
+static async Task RetrieveAsync()
 {
     using (var repository = RepositoryFactory.CreateRepository())
     {
         try
         {
             Expression<Func<Customer, bool>> criteria = c => c.FirstName == "Juan" && c.LastName == "Ibañez";
-            var customer = await repository.RetreiveAsync(criteria);
+            var customer = await repository.RetrieveAsync(criteria);
             if (customer != null) 
             {
-                Console.WriteLine($"Retrived customer: {customer.FirstName}\t{customer.LastName}\tCity: {customer.City}\tCountry:{customer.Country}");
+                Console.WriteLine($"Retrieved customer: {customer.FirstName}\t{customer.LastName}\tCity: {customer.City}\tCountry:{customer.Country}");
             }
             else 
             {
@@ -75,7 +75,7 @@ static async Task UpdateAsync()
 
     using (var repository = RepositoryFactory.CreateRepository()) 
     {
-        var customerToUpdate = await repository.RetreiveAsync<Customer>(c => c.Id == 78);
+        var customerToUpdate = await repository.RetrieveAsync<Customer>(c => c.Id == 78);
 
         if (customerToUpdate != null) 
         {
@@ -134,7 +134,7 @@ static async Task DeleteAsync()
     using (var repository = RepositoryFactory.CreateRepository()) 
     {
         Expression<Func<Customer, bool>> criteria = customer => customer.Id == 93;
-        var customerToDelete = await repository.RetreiveAsync(criteria);
+        var customerToDelete = await repository.RetrieveAsync(criteria);
 
         if (customerToDelete != null)
         {

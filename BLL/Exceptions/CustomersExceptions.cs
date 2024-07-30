@@ -33,7 +33,17 @@ namespace BLL
             throw new NotImplementedException();
         }
 
+        internal static void ThrowInvalidCustomerDataException()
+        {
+            throw new NotImplementedException();
+        }
+
         internal static void ThrowInvalidCustomerIdException(List<Customer> customer)
+        {
+            throw new NotImplementedException();
+        }
+
+        internal static void ThrowInvalidCustomerIdException(int id)
         {
             throw new NotImplementedException();
         }

@@ -12,7 +12,7 @@ namespace DAL
 
             Task<bool> UpdateAsync<TEntity>(TEntity toUpdate) where TEntity : class;
 
-            Task<TEntity> RetreiveAsync<TEntity>(Expression<Func<TEntity, bool>> criteria) where TEntity : class;
+            Task<TEntity> RetrieveAsync<TEntity>(Expression<Func<TEntity, bool>> criteria) where TEntity : class;
 
             Task<List<TEntity>> FilterAsync<TEntity>(Expression<Func<TEntity, bool>> criteria) where TEntity : class;
         }
